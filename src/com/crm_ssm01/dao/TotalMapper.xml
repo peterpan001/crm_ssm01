@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.crm_ssm01.dao.TotalMapper">
+	
+	<select id="findSource" resultType="com.crm_ssm01.pojo.OutVo">
+		SELECT d.dict_item_name,COUNT(*) count FROM cst_customer c,base_dict d 
+		WHERE d.dict_id = c.cust_source GROUP BY d.dict_id
+	</select>
+	
+	<select id="findVocation" resultType="com.crm_ssm01.pojo.OutVo">
+		select d.dict_item_name, count(*) count from cst_customer c,base_dict d
+		where d.dict_id = c.cust_industry group by d.dict_id 
+	</select>
+</mapper>

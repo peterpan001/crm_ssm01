@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.crm_ssm01.dao.LinkmanMapper">
+	<insert id="saveLinkman" parameterType="com.crm_ssm01.pojo.Linkman">
+		INSERT INTO cst_linkman
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="lkm_name!=null">
+				lkm_name,
+			</if>
+			<if test="customer.cust_id!=null">
+				lkm_cust_id,
+			</if>
+			<if test="lkm_gender!=null">
+				lkm_gender,
+			</if>
+			<if test="lkm_phone!=null">
+				lkm_phone,
+			</if>
+			<if test="lkm_mobile!=null">
+				lkm_mobile,
+			</if>
+			<if test="lkm_email!=null">
+				lkm_email,
+			</if>
+			<if test="lkm_qq!=null">
+				lkm_qq,
+			</if>
+			<if test="lkm_position!=null">
+				lkm_position,
+			</if>
+			<if test="lkm_memo!=null">
+				lkm_memo,
+			</if>
+		</trim>
+		<trim prefix=" values (" suffix=")" suffixOverrides=",">
+			<if test="lkm_name!=null">
+				#{lkm_name},
+			</if>
+			<if test="customer.cust_id!=null">
+				#{customer.cust_id},
+			</if>
+			<if test="lkm_gender!=null">
+				#{lkm_gender},
+			</if>
+			<if test="lkm_phone!=null">
+				#{lkm_phone},
+			</if>
+			<if test="lkm_mobile!=null">
+				#{lkm_mobile},
+			</if>
+			<if test="lkm_email!=null">
+				#{lkm_email},
+			</if>
+			<if test="lkm_qq!=null">
+				#{lkm_qq},
+			</if>
+			<if test="lkm_position!=null">
+				#{lkm_position},
+			</if>
+			<if test="lkm_memo!=null">
+				#{lkm_memo},
+			</if>		
+		</trim>
+	</insert>
+	
+	<resultMap type="com.crm_ssm01.pojo.Linkman" id="linkmanCustomer">
+		<id column="lkm_id" property="lkm_id"/>
+		<result column="lkm_name" property="lkm_name"/>
+		<result column="lkm_phone" property="lkm_phone"/>
+		<result column="lkm_gender" property="lkm_gender"/>
+		<result column="lkm_mobile" property="lkm_mobile"/>
+		<result column="lkm_phone" property="lkm_phone"/>
+		<result column="lkm_email" property="lkm_email"/>
+		<result column="lkm_qq" property="lkm_qq"/>
+		<result column="lkm_position" property="lkm_position"/>
+		<result column="lkm_memo" property="lkm_memo"/>
+		<association property="customer" javaType="com.crm_ssm01.pojo.Customer">
+			<id column="cust_id" property="cust_id"/>
+			<result column="cust_name" property="cust_name"/>
+		</association>
+	</resultMap>
+	<select id="findLinkmanByVo" parameterType="com.crm_ssm01.pojo.QueryVo" resultMap="linkmanCustomer">
+		SELECT l.`lkm_id`,       l.`lkm_name`,   l.`lkm_phone`, l.`lkm_gender`,
+      		   l.`lkm_mobile`,   l.`lkm_email`,  l.`lkm_qq`,    l.`lkm_position`, 
+               l.`lkm_memo`,     c.cust_id,      c.cust_name
+			   FROM cst_linkman l LEFT JOIN cst_customer c ON l.`lkm_cust_id` = c.`cust_id`
+			   <where>
+			   		<if test=" lkm_name!=null ">
+			   			and l.lkm_name like '%${lkm_name}%'
+			   		</if>
+			   		<if test=" customer!=null and customer.cust_id!=null ">
+			   			and l.lkm_cust_id = #{customer.cust_id}
+			   		</if>
+			   </where>
+			   limit #{start}, #{pageSize}
+	</select>
+	
+	<select id="findLinkmanCountByVo" parameterType="com.crm_ssm01.pojo.QueryVo" resultType="java.lang.Integer">
+		SELECT count(*) 
+			   FROM cst_linkman l LEFT JOIN cst_customer c ON l.`lkm_cust_id` = c.`cust_id`
+	</select>
+	
+	
+	<select id="findLinkmanById" parameterType="java.lang.Long" resultMap="linkmanCustomer">
+		SELECT l.`lkm_id`, l.`lkm_name`,     l.`lkm_gender`, l.`lkm_phone`, l.`lkm_mobile`, l.`lkm_email`,
+       		   l.`lkm_qq`, l.`lkm_position`, l.`lkm_memo`,   c.`cust_id`,   c.`cust_name` 
+       		   FROM cst_linkman l , cst_customer c 
+       		   WHERE l.`lkm_id` = #{lkm_id} AND l.`lkm_cust_id` = c.`cust_id`;
+	</select>
+	
+	<update id="updateLinkman" parameterType="com.crm_ssm01.pojo.Linkman">
+		update cst_linkman l
+		<!-- set标签：可以自动添加set关键字;可以去掉最后一个更新的逗号 -->
+		<set>
+			<if test=" lkm_name!=null ">
+				l.`lkm_name` = #{lkm_name},
+			</if>
+			<if test=" customer!=null and customer.cust_id!=null">
+				l.`lkm_cust_id` = #{customer.cust_id},
+			</if>
+			<if test=" lkm_gender!=null">
+				 l.`lkm_gender` = #{lkm_gender},
+			</if>
+			<if test=" lkm_phone!=null">
+				l.`lkm_phone` = #{lkm_phone},
+			</if>
+			<if test=" lkm_mobile!=null">
+				l.`lkm_mobile` = #{lkm_mobile},
+			</if>
+			<if test=" lkm_email!=null ">
+				 l.`lkm_email` = #{lkm_email},
+			</if>
+			<if test=" lkm_qq!=null">
+				 l.`lkm_qq` = #{lkm_qq},
+			</if>
+			<if test="lkm_position!=null">
+				l.`lkm_position` = #{lkm_position},
+			</if>
+			<if test="lkm_memo!=null">
+				l.`lkm_memo` =  #{lkm_memo},
+			</if>
+		</set>
+		<where>
+			l.lkm_id = #{lkm_id}
+		</where>
+	</update>
+	
+	<delete id="deleteLinkman" parameterType="java.lang.Long">
+		delete from cst_linkman where lkm_id = #{lkm_id}
+	</delete>
+	
+	<select id="findLinkmanByLkmCustId" parameterType="java.lang.Long" resultType="com.crm_ssm01.pojo.Linkman">
+		select lkm_id from cst_linkman where lkm_cust_id = #{lkm_cust_id}
+	</select>
+</mapper>

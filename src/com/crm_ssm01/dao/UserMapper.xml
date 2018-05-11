@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.crm_ssm01.dao.UserMapper">
+	
+	<select id="checkCode" parameterType="java.lang.String" resultType="com.crm_ssm01.pojo.User">
+		SELECT * FROM sys_user WHERE user_code = #{user_code}
+	</select>
+	
+	<insert id="saveUser" parameterType="com.crm_ssm01.pojo.User">
+		INSERT INTO sys_user(user_code, user_name, user_password, user_state)
+		VALUES(#{user_code}, #{user_name}, #{user_password}, #{user_state});	
+	</insert>
+	
+	<select id="findUser" parameterType="com.crm_ssm01.pojo.User" resultType="com.crm_ssm01.pojo.User">
+		select * from sys_user
+		<where>
+			user_code = #{user_code} and user_password = #{user_password}
+		</where> 
+	</select>
+	
+	<update id="resetPwd" parameterType="com.crm_ssm01.pojo.User">
+		UPDATE sys_user u SET u.`user_password` = #{user_password} WHERE u.`user_id` = #{user_id}; 
+	</update>
+</mapper>

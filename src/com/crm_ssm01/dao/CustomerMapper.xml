@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.crm_ssm01.dao.CustomerMapper">
+
+	<insert id="saveCustomer" parameterType="com.crm_ssm01.pojo.Customer">
+		insert into cst_customer
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="cust_name!=null">
+				cust_name,
+			</if>
+			<if test="cust_user_id!=null">
+				cust_user_id,
+			</if>
+			<if test="cust_create_id!=null">
+				cust_create_id,
+			</if>
+			<if test="source.dict_id!=null">
+				cust_source,
+			</if>
+			<if test="industry.dict_id!=null">
+				cust_industry,
+			</if>
+			<if test="level.dict_id!=null">
+				cust_level,
+			</if>
+			<if test="cust_linkman!=null">
+				cust_linkman,
+			</if>
+			<if test="cust_phone!=null">
+				cust_phone,
+			</if>
+			<if test="cust_mobile!=null">
+				cust_mobile,
+			</if>
+			<if test="cust_address!=null">
+				cust_address,
+			</if>
+			<if test="cust_zip!=null">
+				cust_zip,
+			</if>
+			<if test="cust_pic!=null">
+				cust_pic,
+			</if>
+		</trim>
+		<trim prefix=" values ( " suffix=")" suffixOverrides=",">
+			<if test="cust_name!=null">
+				#{cust_name},
+			</if>
+			<if test="cust_user_id!=null">
+				#{cust_user_id},
+			</if>
+			<if test="cust_create_id!=null">
+				#{cust_create_id},
+			</if>
+			<if test="source.dict_id!=null">
+				#{source.dict_id},
+			</if>
+			<if test="industry.dict_id!=null">
+				#{industry.dict_id},
+			</if>
+			<if test="level.dict_id!=null">
+				#{level.dict_id},
+			</if>
+			<if test="cust_linkman!=null">
+				#{cust_linkman},
+			</if>
+			<if test="cust_phone!=null">
+				#{cust_phone},
+			</if>
+			<if test="cust_mobile!=null">
+				#{cust_mobile},
+			</if>
+			<if test="cust_address!=null">
+				#{cust_address},
+			</if>
+			<if test="cust_zip!=null">
+				#{cust_zip},
+			</if>
+			<if test="cust_pic!=null">
+				#{cust_pic},
+			</if>
+		</trim>
+	</insert>
+	
+	<select id="findCustomerByVo" parameterType="com.crm_ssm01.pojo.QueryVo" resultType="com.crm_ssm01.pojo.CustomerDict">
+		SELECT c1.cust_id, c1.`cust_name`, b1.`dict_item_name` cust_industry, b2.`dict_item_name` cust_level, 
+			   b3.`dict_item_name` cust_source, c1.`cust_linkman`,  c1.`cust_phone`,
+			   c1.`cust_mobile`, c1.`cust_address`, c1.`cust_zip`, c1.`cust_pic`
+			FROM cst_customer c1 
+			LEFT JOIN base_dict b1 ON c1.`cust_industry` = b1.`dict_id`
+			LEFT JOIN base_dict b2 ON c1.`cust_level` = b2.`dict_id`
+			LEFT JOIN base_dict b3 ON c1.`cust_source` = b3.`dict_id`
+			<where>
+				<if test="cust_name!=null">
+					and c1.cust_name like '%${cust_name}%' 
+				</if>
+				<if test="source!=null and source.dict_id!=null ">
+					and c1.cust_source = #{source.dict_id}
+				</if>
+				<if test="industry!=null and industry.dict_id!=null ">
+					and c1.cust_industry = #{industry.dict_id}
+				</if>
+				<if test="level!=null and level.dict_id!=null ">
+					and c1.cust_level = #{level.dict_id}
+				</if>
+			</where>
+			limit #{start}, #{pageSize}
+	</select>
+	
+	<select id="findCustomerCountByVo" parameterType="com.crm_ssm01.pojo.QueryVo" resultType="java.lang.Integer">
+		select count(*) 
+			FROM cst_customer c1 
+			LEFT JOIN base_dict b1 ON c1.`cust_industry` = b1.`dict_id`
+			LEFT JOIN base_dict b2 ON c1.`cust_level` = b2.`dict_id`
+			LEFT JOIN base_dict b3 ON c1.`cust_source` = b3.`dict_id`
+			<where>
+				<if test=" cust_name!=null">
+					and c1.cust_name like '%${cust_name}%' 
+				</if>
+				<if test="source!=null and source.dict_id!=null ">
+					and c1.cust_source = #{source.dict_id}
+				</if>
+				<if test="industry!=null and industry.dict_id!=null ">
+					and c1.cust_industry = #{industry.dict_id}
+				</if>
+				<if test="level!=null and level.dict_id!=null ">
+					and c1.cust_level = #{level.dict_id}
+				</if>
+			</where>
+	</select>
+	
+	<select id="findCustomerById" parameterType="java.lang.Long" resultType="com.crm_ssm01.pojo.CustomerDict">
+		select  c.`cust_id`,     c.`cust_name`,   c.`cust_linkman`, 
+				c.`cust_phone`,  c.`cust_mobile`, c.`cust_address`,
+				c.`cust_zip` ,   c.`cust_source`, c.`cust_industry`, 
+				c.`cust_level`,  c.`cust_pic`
+		from cst_customer c where c.cust_id = #{cust_id};
+	</select>
+	
+	
+	<update id="updateCustomer" parameterType="com.crm_ssm01.pojo.Customer">
+		update cst_customer c1
+		<!-- set标签：可以自动添加set关键字;可以去掉最后一个更新的逗号 -->
+		<set>
+			<if test=" cust_name!=null">
+				c1.`cust_name` = #{cust_name},
+			</if>
+			<if test=" source.dict_id != null">
+				c1.`cust_source` = #{source.dict_id},
+			</if>
+			<if test=" industry.dict_id != null">
+				c1.`cust_industry` = #{industry.dict_id},
+			</if>
+			<if test=" level.dict_id != null ">
+				 c1.`cust_level` = #{level.dict_id},
+			</if>
+			<if test=" cust_linkman!=null">
+				c1.`cust_linkman` = #{cust_linkman},
+			</if>
+			<if test=" cust_phone!=null">
+				c1.`cust_phone` = #{cust_phone},
+			</if>
+			<if test=" cust_mobile!=null">
+				c1.`cust_mobile` = #{cust_mobile},
+			</if>
+			<if test=" cust_zip!=null">
+				c1.`cust_zip` = #{cust_zip},
+			</if>
+			<if test=" cust_address!=null">
+				c1.`cust_address` = #{cust_address},
+			</if>
+			<if test="cust_pic!=null">
+				c1.cust_pic = #{cust_pic},
+			</if>
+		</set>
+		WHERE c1.`cust_id` = #{cust_id}
+	</update>
+	
+	<delete id="deleteCustomer" parameterType="java.lang.Long">
+		delete from cst_customer where cust_id = #{cust_id};
+	</delete>
+	
+	<select id="findAllCustomer" resultType="com.crm_ssm01.pojo.Customer">
+		select cust_id, cust_name from cst_customer 
+	</select>
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.crm_ssm01.dao.VisitMapper">
+	
+	<insert id="saveVisit" parameterType="com.crm_ssm01.pojo.Visit">
+		<selectKey keyProperty="visit_id" order="BEFORE" resultType="java.lang.String">
+			select uuid()
+		</selectKey>
+		INSERT INTO sale_visit
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="visit_id!=null">
+				visit_id,
+			</if>
+			<if test="customer!=null and customer.cust_id!=null ">
+				visit_cust_id,
+			</if>
+			<if test="user!=null and user.user_id!=null">
+				visit_user_id,
+			</if>
+			<if test="visit_time!=null">
+				visit_time,
+			</if>
+			<if test="visit_interviewee!=null">
+				visit_interviewee,
+			</if>
+			<if test="visit_addr!=null">
+				visit_addr,
+			</if>
+			<if test="visit_detail!=null">
+				visit_detail,
+			</if>
+			<if test="visit_nexttime!=null">
+				visit_nexttime,
+			</if>
+		</trim>
+		<trim prefix=" VALUES (" suffix=")" suffixOverrides=",">
+			<if test="visit_id!=null">
+				#{visit_id},
+			</if>
+			<if test="customer!=null and customer.cust_id!=null ">
+				#{customer.cust_id},
+			</if>
+			<if test="user!=null and user.user_id!=null">
+				#{user.user_id},
+			</if>
+			<if test="visit_time!=null">
+				#{visit_time},
+			</if>
+			<if test="visit_interviewee!=null">
+				#{visit_interviewee},
+			</if>
+			<if test="visit_addr!=null">
+				#{visit_addr},
+			</if>
+			<if test="visit_detail!=null">
+				#{visit_detail},
+			</if>
+			<if test="visit_nexttime!=null">
+				#{visit_nexttime},
+			</if>
+		</trim>	
+	</insert>
+	
+	<resultMap type="com.crm_ssm01.pojo.Visit" id="visitCustomer">
+		<id property="visit_id" column="visit_id"/>
+		<result property="visit_interviewee" column="visit_interviewee"/>
+		<result property="visit_addr" column="visit_addr"/>
+		<result property="visit_detail" column="visit_detail"/>
+		<result property="visit_nexttime" column="visit_nexttime"/>
+		<result property="visit_time" column="visit_time"/>
+		<association property="customer" javaType="com.crm_ssm01.pojo.Customer">
+			<id property="cust_id" column="cust_id"/>
+			<result property="cust_name" column="cust_name"/>
+		</association>
+		<association property="user" javaType="com.crm_ssm01.pojo.User">
+			<id property="user_id" column="user_id"/>
+			<result property="user_name" column="user_name"/>
+		</association>
+	</resultMap>
+	
+	<select id="findVisitByVo" parameterType="com.crm_ssm01.pojo.QueryVo" resultMap="visitCustomer">
+		SELECT v.`visit_id`,       v.`visit_interviewee`, v.`visit_addr`, v.`visit_detail`, 
+       		   v.`visit_nexttime`, v.`visit_time`,        c.cust_id,      c.`cust_name`,
+       		   u.user_id,          u.user_name
+			FROM sale_visit v, cst_customer c, sys_user u 
+			<where>
+				and v.`visit_cust_id` = c.`cust_id` AND v.`visit_user_id` = u.`user_id`
+				<if test=" visit_interviewee!=null ">
+					and visit_interviewee like '%${visit_interviewee}%'
+				</if>
+				<if test=" beginDate!=null ">
+					and visit_time <![CDATA[>= #{beginDate}]]>  
+				</if>
+				<if test=" endDate!=null ">
+					and visit_time <![CDATA[<= #{endDate}]]> 
+				</if>
+				<if test=" user!=null and user.user_id!=null">
+			   			and v.visit_user_id = #{user.user_id}
+			   	</if>
+			</where>
+			limit #{start}, #{pageSize}
+	</select>
+	
+	<select id="findVisitCountByVo" parameterType="com.crm_ssm01.pojo.QueryVo" resultType="java.lang.Integer">
+		SELECT count(*) FROM sale_visit v, cst_customer c, sys_user u 
+			<where>
+				and v.`visit_cust_id` = c.`cust_id` AND v.`visit_user_id` = u.`user_id`
+				<if test=" visit_interviewee!=null ">
+					and visit_interviewee like '%${visit_interviewee}%'
+				</if>
+				<if test=" beginDate!=null ">
+					and visit_time <![CDATA[>= #{beginDate}]]>  
+				</if>
+				<if test=" endDate!=null ">
+					and visit_time <![CDATA[<= #{endDate}]]> 
+				</if>
+				<if test=" user!=null and user.user_id!=null">
+			   		and v.visit_user_id = #{user.user_id}
+			   	</if>
+			</where>
+	</select>
+</mapper>
